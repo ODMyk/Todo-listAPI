@@ -1,11 +1,12 @@
 import * as types from "express/ts4.0";
 import * as local from "./localTasks";
+import {Task} from "../models/Task";
 
 let tasks: Task[] = local.tasks;
 
 function searchByTags(tags: string[]) {
     return (item: Task) => {
-        for (let tag of item.tags) {
+        for (let tag of item.getTags()) {
             if (tags.find((t: string) => t === tag)) {
                 return true;
             }
@@ -15,13 +16,13 @@ function searchByTags(tags: string[]) {
 }
 
 function createTask(req: types.Request, res: types.Response) {
-    const {id, name, description, tags, created, limit, status} = req.body;
-    if (tasks.find((t: Task) => t.id === id)) {
+    const {id, name, description, tags, limit} = req.body;
+    if (tasks.find((t: Task) => t.getID() === id)) {
         return res.status(400).json({success: false, msg: `Task with id ${id} already exists`});
     }
     let newTask: Task;
     try {
-        newTask = {id, name, description, tags, created, limit, status};
+        newTask = new Task(id, name, description, tags, new Date().toUTCString(), limit, 1);
     } catch (e) {
         console.log(e);
         return res.status(400).json({success: false, msg: "Bad arguments"});
@@ -43,7 +44,7 @@ function getTasks(req: types.Request, res: types.Response) {
 
 function getTask(req: types.Request, res: types.Response) {
     const id = Number(req.params.id);
-    const foundTask = tasks.find((item: Task) => item.id === id);
+    const foundTask = tasks.find((item: Task) => item.getID() === id);
     if (foundTask) {
         return res.status(200).json({success: true, task: foundTask});
     }
@@ -51,30 +52,14 @@ function getTask(req: types.Request, res: types.Response) {
     return res.status(404).json({success: false, msg: `Task with id ${id} does not exist`});
 }
 
-function updateKeys(task: Task, updater: object): Task {
-    const isValidKey = (value: string): value is keyof typeof updater => {
-        return value in updater && value in task;
-    }
-    for (let field of Object.keys(updater)) {
-        if (isValidKey(field)) {
-            if (updater[field]) {
-                task[field] = updater[field];
-            }
-        }
-    }
-
-    return task;
-}
-
 function updateTask(req: types.Request, res: types.Response) {
     const id = Number(req.params.id);
     const {name, description, tags, limit, status} = req.body;
-    const updater: object = {name, description, tags, limit, status};
-    const foundTask = tasks.find((item: Task) => item.id === id);
+    const foundTask = tasks.find((item: Task) => item.getID() === id);
     if (foundTask) {
-        const newTask = updateKeys(foundTask, updater);
-        tasks = tasks.map((item: Task): Task => item.id === id ? newTask : item);
-        return res.status(201).json({success: true, newTask});
+        foundTask.update({name, description, tags, limit, status});
+        tasks = tasks.map((item: Task): Task => item.getID() === id ? foundTask : item);
+        return res.status(201).json({success: true, foundTask});
     }
 
     return res.status(404).json({success: false, msg: `Task with id ${id} does not exist`});
@@ -82,9 +67,9 @@ function updateTask(req: types.Request, res: types.Response) {
 
 function deleteTask(req: types.Request, res: types.Response) {
     const id = Number(req.params.id);
-    const foundTask = tasks.find((item: Task) => item.id === id);
+    const foundTask = tasks.find((item: Task) => item.getID() === id);
     if (foundTask) {
-        tasks = tasks.filter((item: Task) => item.id !== id);
+        tasks = tasks.filter((item: Task) => item.getID() !== id);
         return res.status(200).json({success: true, deletedTask: foundTask});
     }
 

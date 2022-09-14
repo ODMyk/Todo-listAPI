@@ -1,8 +1,7 @@
-// @ts-ignore
+import {Task, TaskTimeLimit} from "../models/Task";
+
 const tasks: Task[] = [];
-
-const exampleTask: Task = {id: 0, name: "Example", description: "Just for your reference", status: 1, created: new Date().toDateString(), tags: ["Practice"], limit: {expires: false, endDate: null}}
-
+const exampleTask: Task = new Task(0, "Example", "Just for your reference", ["Practice"], new Date().toUTCString(), new TaskTimeLimit(false, null), 1);
 tasks.push(exampleTask);
 
 export {tasks};
