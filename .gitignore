@@ -16,3 +16,4 @@ dist/
 build/
 \.DS_Store
 \.idea/
+\.env

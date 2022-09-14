@@ -1,17 +1,17 @@
 import * as types from "express/ts4.0";
+import express from "express";
 
-const express = require("express");
-const {
+import {
     createTask,
     getTasks,
     getTask,
     updateTask,
     deleteTask
-} = require("../controllers/tasks");
+} from "../controllers/tasks";
 
 const router: types.Router = express.Router();
 
 router.route("/").post(createTask).get(getTasks);
 router.route("/:id").get(getTask).put(updateTask).delete(deleteTask);
 
-module.exports = router;
+export {router};

@@ -5,4 +5,4 @@ const exampleTask: Task = {id: 0, name: "Example", description: "Just for your r
 
 tasks.push(exampleTask);
 
-module.exports = {tasks};
+export {tasks};

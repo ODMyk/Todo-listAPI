@@ -1,7 +1,10 @@
 import * as types from "express/ts4.0";
+import * as dotenv from "dotenv";
+import express from "express";
+import {router as tasks} from "./routes/tasks"
 
-const express = require("express");
-const tasks = require("./routes/tasks");
+dotenv.config();
+
 const app: types.Application = express();
 
 //set-ups
