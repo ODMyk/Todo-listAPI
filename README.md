@@ -10,7 +10,7 @@ tsc
 ```
 GET /api/tasks?tags=
 ```
-Returns json with all existing tasks that have given tags(separated with %20).
+Returns json with all existing tasks that have given tags(separated with %44).
 
 <hr>
 
