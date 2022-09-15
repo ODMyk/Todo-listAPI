@@ -47,3 +47,7 @@ Deletes task with given id.
 Returns json representation of deleted task.
 
 <hr>
+
+## Future of the project
+
+I am moving to NestJS framework, so this project is actually frozen. It is completed in it's own style and could be marked as done in specific case. Of course, it needs a database, but due to my choice, it won't get this update. Anyone could use it as reference or as part of his own non-commercial project.
